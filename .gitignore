@@ -1,0 +1,23 @@
+# Object files
+*.o
+obj/
+
+# Executable
+pipex
+
+# Bonus executable (if different name)
+pipex_bonus
+
+# Editor and system files
+.DS_Store
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Test files
+test_*
+*.txt
+infile
+outfile
