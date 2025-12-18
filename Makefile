@@ -1,9 +1,10 @@
 CC = cc
-LIBFT = libft.a
-LIBFTDIR =
-FLAGS = -Wall -Wextra -Werror
+LIBFTDIR = libft
+LIBFT = $(LIBFTDIR)/libft.a
+CFLAGS = -Wall -Wextra -Werror
 NAME = pipex
 OBJ = $(SRC:.c=.o)
+INCLUDES = -I $(LIBFTDIR)
 RM := rm -f
 SRC = main.c\
 parsing.c\
@@ -12,18 +13,21 @@ utils.c\
 
 all: $(NAME)
 	
+$(NAME): $(OBJ) $(LIBFT)
+	$(CC) $(FLAGS) $^ -o $@
 
-$(NAME): $(OBJ)
-	ar rcs $@ $^
-
+$(LIBFT):
+	@make -C $(LIBFTDIR) --no-print-directory
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
-	$(RM) $(OBJ)
+	@$(RM) $(OBJ)
+	@make clean -C $(LIBFTDIR) --no-print-directory
 
 fclean: clean
-	$(RM) $(NAME)
+	@$(RM) $(NAME)
+	@make fclean -C $(LIBFTDIR) --no-print-directory
 
 re: fclean all
 

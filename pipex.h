@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
+#include "libft/libft.h"
 
 typedef struct s_pipe
 {
@@ -28,6 +29,7 @@ typedef struct s_pipe
 	char	*file2;
 	char	*path;
 	int		fd;
+	int		fd2;
 }	t_pipe;
 
 #endif
