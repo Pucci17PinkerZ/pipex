@@ -16,8 +16,8 @@ int	main(int ac, char **av, char **envp)
 	t_pipe	pipe;
 
 
-	(void)envp;
-	(void)ac;
+	// (void)envp;
+	// (void)ac;
 
 	pipe.file1 = av[1];
 	pipe.fd = open(pipe.file1, O_WRONLY, 0644);//potentiel bug pour le cas write_only
@@ -26,25 +26,34 @@ int	main(int ac, char **av, char **envp)
 	pipe.fd2 = dup2(pipe.fd, 0);
 	if (pipe.fd2 == -1)
 		return (1);
-	// path_check();
+	path_check();
 	
 }
+//être écolo avec mon i c'est dangereux?
+char	*path_check(t_pipe *pipe, char **envp)
+{
+	int		i;
+	char	**all_path;
+	i = path_find(envp);
+	all_path = ft_split(&envp[i][4], ':');
+	if (!all_path)
+		return (NULL);
+	i = 0;
+	while ()//bloqué ici trouver uun condition pour access
+	access();
+}
 
-// char	*path_check(t_pipe *pipe, char **envp)
-// {
-// 	path_find();
-// }
+int	path_find(char **envp)
+{
+	int	i;
 
-// int	path_find(t_pipe *pipe, char **envp)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	while (envp[i])
-// 	{
-		
-// 	}
-// }
+	i = 0;
+	while (strncmp(envp[i], "PATH=", 5) != 0)
+	{
+		i++;
+	}
+	return (i);
+}
 
 // Should behave like:
 // $> ./pipex infile "grep a1" "wc -w" outfile
