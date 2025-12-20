@@ -15,32 +15,35 @@ int	main(int ac, char **av, char **envp)
 {
 	t_pipe	pipe;
 
-
-	// (void)envp;
-	// (void)ac;
+	(void)ac;
 
 	pipe.file1 = av[1];
-	pipe.fd = open(pipe.file1, O_WRONLY, 0644);//potentiel bug pour le cas write_only
+	pipe.fd = open(pipe.file1, O_WRONLY, 0644);
 	if (pipe.fd == -1)
 		return (1);
 	pipe.fd2 = dup2(pipe.fd, 0);
 	if (pipe.fd2 == -1)
 		return (1);
-	path_check();
-	
+	pipe.path1 = ft_strjoin("/", av[2]);
+	printf("path de la commande == %s\n", path_check(&pipe, envp));
+	return (0);
 }
-//être écolo avec mon i c'est dangereux?
+
 char	*path_check(t_pipe *pipe, char **envp)
 {
 	int		i;
 	char	**all_path;
+	char	*path_checker;
+
 	i = path_find(envp);
 	all_path = ft_split(&envp[i][4], ':');
 	if (!all_path)
 		return (NULL);
 	i = 0;
-	while ()//bloqué ici trouver uun condition pour access
-	access();
+	path_checker = path_exist(pipe, all_path);
+	if (!path_checker)
+		return (perror("path_checker :("), NULL);
+	return (path_checker);
 }
 
 int	path_find(char **envp)
@@ -48,11 +51,33 @@ int	path_find(char **envp)
 	int	i;
 
 	i = 0;
-	while (strncmp(envp[i], "PATH=", 5) != 0)
+	while (envp[i])
 	{
+		if (!strncmp(envp[i], "PATH=", 5))
+			return (i);
 		i++;
 	}
-	return (i);
+	perror("pas PATH dans envp");
+	return (1);
+}
+
+char	*path_exist(t_pipe *pipe, char **all_path)
+{
+	int	i;
+	char *tmp;
+
+	i = 0;
+	while (all_path[i])
+	{
+		tmp = ft_strjoin(all_path[i], pipe->path1);
+		printf("tmp == %s\n", tmp);
+		if (!access(tmp, F_OK))
+			return (tmp);
+		free(tmp);
+		i++;
+	}
+	perror("PATH inexistant");
+	return (NULL);
 }
 
 // Should behave like:

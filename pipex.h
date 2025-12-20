@@ -27,10 +27,18 @@ typedef struct s_pipe
 {
 	char	*file1;
 	char	*file2;
-	char	*path;
+	char	*path1;
+	char	*path2;
 	int		fd;
 	int		fd2;
 }	t_pipe;
+
+char	*path_check(t_pipe *pipe, char **envp);
+int		path_find(char **envp);
+char	*path_exist(t_pipe *pipe, char **all_path);
+
+void	free_tab(char **tab);
+int		tab_element(char *tab);
 
 #endif
 
