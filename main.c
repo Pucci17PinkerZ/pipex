@@ -13,34 +13,46 @@
 
 int	main(int ac, char **av, char **envp)
 {
-	t_pipe	pipe;
+	t_pipex	pipex;
 
+	ft_bzero(&pipex, sizeof(t_pipex));
 	(void)ac;
+	if (setup(&pipex, av, envp))
+		return (clean_exit(&pipex),1);
+	new_child();
+	printf("valeur de de true_path == %s\n", pipex.true_path1);
+	return (clean_exit(&pipex), 0);
+}
 
-	pipe.file1 = av[1];
-	pipe.fd = open(pipe.file1, O_WRONLY, 0644);
-	if (pipe.fd == -1)
+int	setup(t_pipex *pipex, char **av, char **envp)
+{
+	pipex->file1 = av[1];
+	pipex->fd = open(pipex->file1, O_WRONLY, 0644);
+	if (pipex->fd == -1)
+		return (perror("open error"), 1);
+	pipex->fd2 = dup2(pipex->fd, 0);
+	if (pipex->fd2 == -1)
+		return (perror("dup2 error"), 1);
+	pipex->cmd_args = ft_split(av[2], ' ');
+	if (!pipex->cmd_args)
 		return (1);
-	pipe.fd2 = dup2(pipe.fd, 0);
-	if (pipe.fd2 == -1)
+	pipex->path1 = ft_strjoin("/", pipex->cmd_args[0]);
+	pipex->true_path1 = path_check(pipex, envp);
+	if (!pipex->true_path1)
 		return (1);
-	pipe.path1 = ft_strjoin("/", av[2]);
-	printf("path de la commande == %s\n", path_check(&pipe, envp));
 	return (0);
 }
 
-char	*path_check(t_pipe *pipe, char **envp)
+char	*path_check(t_pipex *pipex, char **envp)
 {
 	int		i;
-	char	**all_path;
 	char	*path_checker;
 
 	i = path_find(envp);
-	all_path = ft_split(&envp[i][4], ':');
-	if (!all_path)
+	pipex->all_path = ft_split(&envp[i][5], ':');
+	if (!pipex->all_path)
 		return (NULL);
-	i = 0;
-	path_checker = path_exist(pipe, all_path);
+	path_checker = path_exist(pipex, pipex->all_path);
 	if (!path_checker)
 		return (perror("path_checker :("), NULL);
 	return (path_checker);
@@ -61,7 +73,7 @@ int	path_find(char **envp)
 	return (1);
 }
 
-char	*path_exist(t_pipe *pipe, char **all_path)
+char	*path_exist(t_pipex *pipex, char **all_path)
 {
 	int	i;
 	char *tmp;
@@ -69,10 +81,10 @@ char	*path_exist(t_pipe *pipe, char **all_path)
 	i = 0;
 	while (all_path[i])
 	{
-		tmp = ft_strjoin(all_path[i], pipe->path1);
+		tmp = ft_strjoin(all_path[i], pipex->path1);
 		printf("tmp == %s\n", tmp);
 		if (!access(tmp, F_OK))
-			return (tmp);
+			return (strdup(tmp));
 		free(tmp);
 		i++;
 	}

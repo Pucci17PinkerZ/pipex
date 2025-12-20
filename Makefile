@@ -1,7 +1,7 @@
 CC = cc
 LIBFTDIR = libft
 LIBFT = $(LIBFTDIR)/libft.a
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -g -Wall -Wextra -Werror
 NAME = pipex
 OBJ = $(SRC:.c=.o)
 INCLUDES = -I $(LIBFTDIR)

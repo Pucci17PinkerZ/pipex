@@ -12,6 +12,21 @@
 
 #include "pipex.h"
 
+void	clean_exit(t_pipex *pipex)
+{
+	if (pipex->cmd_args)
+		free_tab(pipex->cmd_args);
+	if (pipex->all_path)
+		free_tab(pipex->all_path);
+	if (pipex->path1)
+		free(pipex->path1);
+	if (pipex->path2)
+		free(pipex->path2);
+	if (pipex->true_path1)
+		free(pipex->true_path1);
+	return ;
+}
+
 void	free_tab(char **tab)
 {
 	int	i;

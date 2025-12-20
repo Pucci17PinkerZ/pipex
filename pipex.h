@@ -23,22 +23,29 @@
 #include <string.h>
 #include "libft/libft.h"
 
-typedef struct s_pipe
+typedef struct s_pipex
 {
+	char	**cmd_args;
+	char	**all_path;
 	char	*file1;
 	char	*file2;
+	char	*true_path1;
 	char	*path1;
+	char	*true_path2;//check si tu le utilise
 	char	*path2;
 	int		fd;
 	int		fd2;
-}	t_pipe;
+}	t_pipex;
 
-char	*path_check(t_pipe *pipe, char **envp);
+int		setup(t_pipex *pipex, char **av, char **envp);
+char	*path_check(t_pipex *pipex, char **envp);
 int		path_find(char **envp);
-char	*path_exist(t_pipe *pipe, char **all_path);
+char	*path_exist(t_pipex *pipex, char **all_path);
 
 void	free_tab(char **tab);
 int		tab_element(char *tab);
+
+void	clean_exit(t_pipex *pipex);
 
 #endif
 
