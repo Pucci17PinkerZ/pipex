@@ -25,22 +25,32 @@
 
 typedef struct s_pipex
 {
+	int		pipedes[2];
 	char	**cmd_args;
+	char	**cmd2_args;
 	char	**all_path;
+	char	**av;
 	char	*file1;
 	char	*file2;
 	char	*true_path1;
 	char	*path1;
-	char	*true_path2;//check si tu le utilise
+	char	*true_path2;
 	char	*path2;
-	int		fd;
-	int		fd2;
+	int		oldfd1;
+	int		newfd1;
+	int		oldfd2;
+	int		newfd2;
 }	t_pipex;
 
 int		setup(t_pipex *pipex, char **av, char **envp);
-char	*path_check(t_pipex *pipex, char **envp);
+int		set_fd(t_pipex *pipex, char **av);
+char	*path_check(t_pipex *pipex, char **envp, char *path);
 int		path_find(char **envp);
-char	*path_exist(t_pipex *pipex, char **all_path);
+char	*path_exist(t_pipex *pipex, char **all_path, char *path);
+
+int		new_child(t_pipex *pipex);
+int		child_do(t_pipex *pipex, char **envp);
+int		parent_do(t_pipex *pipex, char **envp);
 
 void	free_tab(char **tab);
 int		tab_element(char *tab);

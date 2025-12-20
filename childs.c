@@ -12,25 +12,41 @@
 
 #include "pipex.h"
 
-int	new_child()
+int	new_child(t_pipex *pipex, char **envp)
 {
-	pid_t	id1;
+	pid_t	id;
 
-	id1 = fork();
-	if (id1 == -1)
+	pipe(&pipex->pipedes);
+	id = fork();
+	if (id == -1)
 		return (perror("fork"), 1);
-	else if (id1 == 0)
+	else if (id == 0)
 	{
-		printf("i'am the child\n");
+		if (child_do(pipex, envp))
+			return (1);
 	}
 	else
 	{
-		printf("i'am the parent\n");
+		if (parent_do(pipex, envp))
+			return (1);
 	}
+	return (0);
+}
+
+
+int	child_do(t_pipex *pipex, char **envp)
+{
+	close(pipex->oldfd1);
+	close(pipex->oldfd2);
+	if (execve(pipex->true_path1, pipex->cmd_args, envp))
+		return (1);
 	
 }
 
-int	find_child()
+int	parent_do(t_pipex *pipex, char **envp)
 {
-
+	close(pipex->newfd1);
+	dup2(pipex->newfd2, 0);
+	if (execve(pipex->true_path2, pipex->cmd2_args, envp))
+	return (1);
 }
