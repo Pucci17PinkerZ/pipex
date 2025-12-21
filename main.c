@@ -20,15 +20,9 @@ int	main(int ac, char **av, char **envp)
 	ft_bzero(&pipex, sizeof(t_pipex));
 	(void)ac;
 	if (setup(&pipex, av, envp))
-		return (clean_exit(&pipex),1);
-	// printf("setup ok\n");
-	// 	printf("true_path2 == %s\n", pipex.true_path2);
-	// printf("true_path1 == %s\n", pipex.true_path1);
-	// printf("av[3] == %s\n", av[3]);
-	// write(2, "DEBUG22: Je suis dans setup\n", 26);
+		return (clean_exit(&pipex), 1);
 	if (new_child(&pipex, envp))
 		return (clean_exit(&pipex), 1);
-
 	waitpid(pipex.child1, NULL, 0);
 	waitpid(pipex.child2, NULL, 0);
 	return (clean_exit(&pipex), 0);
@@ -38,7 +32,6 @@ int	setup(t_pipex *pipex, char **av, char **envp)
 {
 	if (set_fd(pipex, av))
 		return (perror("set_fd"), 1);
-	pipex->av = av;//utile????
 	pipex->cmd_args = ft_split(av[2], ' ');
 	if (!pipex->cmd_args)
 		return (perror("ft_split"), 1);

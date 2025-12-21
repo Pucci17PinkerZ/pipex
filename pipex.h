@@ -11,17 +11,17 @@
 /* ************************************************************************** */
 
 #ifndef PIPEX_H
-#define PIPEX_H
+# define PIPEX_H
 
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <errno.h>
-#include <string.h>
-#include "libft/libft.h"
+# include <unistd.h>
+# include <fcntl.h>
+# include <sys/types.h>
+# include <sys/wait.h>
+# include <stdlib.h>
+# include <stdio.h>
+# include <errno.h>
+# include <string.h>
+# include "libft/libft.h"
 
 typedef struct s_pipex
 {
@@ -60,4 +60,3 @@ int		fd_close(t_pipex *pipex);
 void	clean_exit(t_pipex *pipex);
 
 #endif
-
