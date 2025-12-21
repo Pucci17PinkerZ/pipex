@@ -14,39 +14,91 @@
 
 int	new_child(t_pipex *pipex, char **envp)
 {
-	pid_t	id;
-
-	pipe(&pipex->pipedes);
-	id = fork();
-	if (id == -1)
+	if (pipe(pipex->pipedes))
+		return (perror("pipe"), 1);
+	pipex->child1 = fork();
+	if (pipex->child1 == -1)
 		return (perror("fork"), 1);
-	else if (id == 0)
+	else if (pipex->child1 == 0)
 	{
 		if (child_do(pipex, envp))
-			return (1);
+			return (perror("child_do"), 1);
 	}
 	else
 	{
 		if (parent_do(pipex, envp))
-			return (1);
+			return (perror("parent _do"), 1);
 	}
 	return (0);
 }
 
-
 int	child_do(t_pipex *pipex, char **envp)
 {
-	close(pipex->oldfd1);
-	close(pipex->oldfd2);
+			printf("child1 existe\n");
+	if ((dup2(pipex->oldfd1, 0)) == -1)
+		return (perror("dup2.1"), 1);
+	if ((dup2(pipex->pipedes[1], 1)) == -1)
+		return (perror("dup2.2"), 1);
 	if (execve(pipex->true_path1, pipex->cmd_args, envp))
 		return (1);
-	
+	return (0);
 }
 
 int	parent_do(t_pipex *pipex, char **envp)
 {
-	close(pipex->newfd1);
-	dup2(pipex->newfd2, 0);
-	if (execve(pipex->true_path2, pipex->cmd2_args, envp))
-	return (1);
+	pipex->child2 = fork();
+	if (pipex->child2 == -1)
+		return (perror("fork"), 1);
+	else if (pipex->child2 == 0)//child2
+	{
+		printf("child2 existe\n");
+		if ((dup2(pipex->pipedes[0], 0)) == -1)
+			return (perror("dup2.1"), 1);
+		if ((dup2(pipex->oldfd2, 1)) == -1)
+			return (perror("dup2.2"), 1);
+		if (execve(pipex->true_path2, pipex->cmd2_args, envp))
+			return (perror("execve"), 1);
+	}
+	else//parent
+	{
+		if (parent_close(pipex))
+		return (perror("parent_close"), 1);
+	}
+	return (0);
+
+}
+
+int	fd_close(t_pipex *pipex)
+{
+	if (pipex->oldfd1 != -1)
+	{
+		close(pipex->oldfd1);
+		pipex->oldfd1 = -1;
+	}
+	if (pipex->oldfd2 != -1)
+	{
+		close(pipex->oldfd2);
+		pipex->oldfd2 = -1;
+	}
+	if (pipex->newfd1 != -1)
+	{
+		close(pipex->newfd1);
+		pipex->newfd1 = -1;
+	}
+	if (pipex->newfd2 != -1)
+	{
+		close(pipex->newfd2);
+		pipex->newfd2 = -1;
+	}
+	if (pipex->pipedes[0] != -1)
+	{
+		close(pipex->pipedes[0]);
+		pipedes[0] = -1;
+	}
+	if (pipex->pipedes[1] != -1)
+	{
+		close(pipex->pipedes[1]);
+		pipedes[1] = -1;
+	}
+	return (0);
 }

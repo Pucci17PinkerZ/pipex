@@ -40,15 +40,17 @@ typedef struct s_pipex
 	int		newfd1;
 	int		oldfd2;
 	int		newfd2;
+	pid_t	child1;
+	pid_t	child2;
 }	t_pipex;
 
 int		setup(t_pipex *pipex, char **av, char **envp);
 int		set_fd(t_pipex *pipex, char **av);
 char	*path_check(t_pipex *pipex, char **envp, char *path);
 int		path_find(char **envp);
-char	*path_exist(t_pipex *pipex, char **all_path, char *path);
+char	*path_exist(char **all_path, char *path);
 
-int		new_child(t_pipex *pipex);
+int		new_child(t_pipex *pipex, char **envp);
 int		child_do(t_pipex *pipex, char **envp);
 int		parent_do(t_pipex *pipex, char **envp);
 

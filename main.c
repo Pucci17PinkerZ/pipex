@@ -15,15 +15,21 @@ int	main(int ac, char **av, char **envp)
 {
 	t_pipex	pipex;
 
-	if (ac != 4)
+	if (ac != 5)
 		return (1);
 	ft_bzero(&pipex, sizeof(t_pipex));
 	(void)ac;
 	if (setup(&pipex, av, envp))
 		return (clean_exit(&pipex),1);
-	if (new_child(&pipex))
+	// printf("setup ok\n");
+	// 	printf("true_path2 == %s\n", pipex.true_path2);
+	// printf("true_path1 == %s\n", pipex.true_path1);
+	// printf("av[3] == %s\n", av[3]);
+	// write(2, "DEBUG22: Je suis dans setup\n", 26);
+	if (new_child(&pipex, envp))
 		return (clean_exit(&pipex), 1);
-	// printf("valeur de de true_path == %s\n", pipex.true_path1);
+	waitpid(pipex.child1, NULL, 0);
+	waitpid(pipex.child2, NULL, 0);
 	return (clean_exit(&pipex), 0);
 }
 
@@ -39,7 +45,6 @@ int	setup(t_pipex *pipex, char **av, char **envp)
 	pipex->true_path1 = path_check(pipex, envp, pipex->path1);
 	if (!pipex->true_path1)
 		return (perror("path_check"), 1);
-	return (0);
 	pipex->cmd2_args = ft_split(av[3], ' ');
 	if (!pipex->cmd2_args)
 		return (perror("ft_split"), 1);
@@ -59,7 +64,7 @@ char	*path_check(t_pipex *pipex, char **envp, char *path)
 	pipex->all_path = ft_split(&envp[i][5], ':');
 	if (!pipex->all_path)
 		return (free_tab(pipex->all_path), perror("ft_split"), NULL);
-	path_checker = path_exist(pipex, pipex->all_path, path);
+	path_checker = path_exist(pipex->all_path, path);
 	if (!path_checker)
 		return (free_tab(pipex->all_path), perror("path_exist"), NULL);
 	return (free_tab(pipex->all_path), path_checker);
@@ -79,7 +84,7 @@ int	path_find(char **envp)
 	return (1);
 }
 
-char	*path_exist(t_pipex *pipex, char **all_path, char *path)
+char	*path_exist(char **all_path, char *path)
 {
 	int		i;
 	char	*tmp;
@@ -88,7 +93,6 @@ char	*path_exist(t_pipex *pipex, char **all_path, char *path)
 	while (all_path[i])
 	{
 		tmp = ft_strjoin(all_path[i], path);
-		printf("tmp == %s\n", tmp);
 		if (!access(tmp, F_OK))
 			return (strdup(tmp));
 		free(tmp);

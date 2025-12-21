@@ -51,17 +51,9 @@ int	set_fd(t_pipex *pipex, char **av)
 	pipex->oldfd1 = open(pipex->file1, O_RDONLY, 0644);
 	if (pipex->oldfd1 == -1)
 		return (perror("open"), 1);
-	pipex->newfd1 = dup2(pipex->oldfd1, 0);
-	if (pipex->newfd1 == -1)
-		return (perror("dup2"), 1);
-	pipex->file2 = av[5];
-	pipex->oldfd2 = open(pipex->file1, O_RDONLY, 0644);
+	pipex->file2 = av[4];
+	pipex->oldfd2 = open(pipex->file2, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (pipex->oldfd2 == -1)
 		return (perror("open"), 1);
-	pipex->newfd2 = dup2(pipex->oldfd2, 1);
-	if (pipex->newfd2 == -1)
-		return (perror("dup2"), 1);
-	pipex->pipedes[0] = pipex->newfd1;
-	pipex->pipedes[1] = pipex->newfd2;
 	return (0);
 }
