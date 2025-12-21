@@ -56,7 +56,7 @@ int		parent_do(t_pipex *pipex, char **envp);
 
 void	free_tab(char **tab);
 int		tab_element(char *tab);
-
+int		fd_close(t_pipex *pipex);
 void	clean_exit(t_pipex *pipex);
 
 #endif

@@ -28,6 +28,7 @@ int	main(int ac, char **av, char **envp)
 	// write(2, "DEBUG22: Je suis dans setup\n", 26);
 	if (new_child(&pipex, envp))
 		return (clean_exit(&pipex), 1);
+
 	waitpid(pipex.child1, NULL, 0);
 	waitpid(pipex.child2, NULL, 0);
 	return (clean_exit(&pipex), 0);

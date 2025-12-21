@@ -39,6 +39,15 @@ int	child_do(t_pipex *pipex, char **envp)
 		return (perror("dup2.1"), 1);
 	if ((dup2(pipex->pipedes[1], 1)) == -1)
 		return (perror("dup2.2"), 1);
+// 2. NETTOYAGE
+    // Je ferme le bout de lecture (inutile pour moi)
+    close(pipex->pipedes[0]);
+    
+    // Je ferme le bout d'écriture (j'ai ma copie sur le 1)
+    close(pipex->pipedes[1]);
+    
+    // Je ferme le infile
+    close(pipex->oldfd1);
 	if (execve(pipex->true_path1, pipex->cmd_args, envp))
 		return (1);
 	return (0);
@@ -56,16 +65,19 @@ int	parent_do(t_pipex *pipex, char **envp)
 			return (perror("dup2.1"), 1);
 		if ((dup2(pipex->oldfd2, 1)) == -1)
 			return (perror("dup2.2"), 1);
+		close(pipex->pipedes[1]); 
+		
+		// Je ferme aussi le bout de lecture (j'ai déjà ma copie sur le 0)
+		close(pipex->pipedes[0]);
+		
+		// Je ferme le fichier (j'ai déjà ma copie sur le 1)
+		close(pipex->oldfd2);
 		if (execve(pipex->true_path2, pipex->cmd2_args, envp))
 			return (perror("execve"), 1);
 	}
-	else//parent
-	{
-		if (parent_close(pipex))
-		return (perror("parent_close"), 1);
-	}
+	else
+		fd_close(pipex);
 	return (0);
-
 }
 
 int	fd_close(t_pipex *pipex)
@@ -93,12 +105,12 @@ int	fd_close(t_pipex *pipex)
 	if (pipex->pipedes[0] != -1)
 	{
 		close(pipex->pipedes[0]);
-		pipedes[0] = -1;
+		pipex->pipedes[0] = -1;
 	}
 	if (pipex->pipedes[1] != -1)
 	{
 		close(pipex->pipedes[1]);
-		pipedes[1] = -1;
+		pipex->pipedes[1] = -1;
 	}
 	return (0);
 }
