@@ -21,6 +21,8 @@ int	main(int ac, char **av, char **envp)
 			" \"cmd1\" \"cmd2\" <outfile>\n", 55);
 		return (1);
 	}
+	if (test_input(av))
+		return (perror("test_input"), 1);
 	ft_bzero(&pipex, sizeof(t_pipex));
 	(void)ac;
 	if (setup(&pipex, av, envp))
@@ -102,17 +104,5 @@ char	*path_exist(char **all_path, char *path)
 			return (tmp);
 		i++;
 	}
-	return (NULL);
-}
-
-char	*access_check(char *all_path, char *path)
-{
-	char	*tmp;
-	char	*tmp2;
-
-	tmp = ft_strjoin(all_path, path);
-	if (!access(tmp, F_OK | X_OK))
-		return (tmp2 = ft_strdup(tmp),free(tmp), tmp2);
-	free(tmp);
 	return (NULL);
 }

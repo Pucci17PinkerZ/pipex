@@ -57,3 +57,28 @@ int	set_fd(t_pipex *pipex, char **av)
 		return (perror("open"), 1);
 	return (0);
 }
+
+char	*access_check(char *all_path, char *path)
+{
+	char	*tmp;
+	char	*tmp2;
+
+	tmp = ft_strjoin(all_path, path);
+	if (!access(tmp, F_OK | X_OK))
+		return (tmp2 = ft_strdup(tmp), free(tmp), tmp2);
+	free(tmp);
+	return (NULL);
+}
+
+int	test_input(char **av)
+{
+	if (!av[1])
+		return (1);
+	if (!av[2])
+		return (1);
+	if (!av[3])
+		return (1);
+	if (!av[4])
+		return (1);
+	return (0);
+}
