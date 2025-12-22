@@ -16,7 +16,11 @@ int	main(int ac, char **av, char **envp)
 	t_pipex	pipex;
 
 	if (ac != 5)
+	{
+		write(1, "way of use -> ./pipex <infile>"
+			" \"cmd1\" \"cmd2\" <outfile>\n", 55);
 		return (1);
+	}
 	ft_bzero(&pipex, sizeof(t_pipex));
 	(void)ac;
 	if (setup(&pipex, av, envp))
@@ -30,8 +34,6 @@ int	main(int ac, char **av, char **envp)
 
 int	setup(t_pipex *pipex, char **av, char **envp)
 {
-	if (set_fd(pipex, av))
-		return (perror("set_fd"), 1);
 	pipex->cmd_args = ft_split(av[2], ' ');
 	if (!pipex->cmd_args)
 		return (perror("ft_split"), 1);
@@ -46,6 +48,8 @@ int	setup(t_pipex *pipex, char **av, char **envp)
 	pipex->true_path2 = path_check(pipex, envp, pipex->path2);
 	if (!pipex->true_path2)
 		return (perror("path_check"), 1);
+	if (set_fd(pipex, av))
+		return (perror("set_fd"), 1);
 	return (0);
 }
 
@@ -55,6 +59,12 @@ char	*path_check(t_pipex *pipex, char **envp, char *path)
 	char	*path_checker;
 
 	i = path_find(envp);
+	if (i == -1)
+	{
+		if ((path_checker = access_check("", path)) != NULL)
+			return (path_checker);
+		return (perror("access_check"), NULL);
+	}
 	pipex->all_path = ft_split(&envp[i][5], ':');
 	if (!pipex->all_path)
 		return (free_tab(pipex->all_path), perror("ft_split"), NULL);
@@ -69,30 +79,40 @@ int	path_find(char **envp)
 	int	i;
 
 	i = 0;
+	if (!envp)
+		return (-1);
 	while (envp[i])
 	{
 		if (!strncmp(envp[i], "PATH=", 5))
 			return (i);
 		i++;
 	}
-	return (1);
+	return (-1);
 }
 
 char	*path_exist(char **all_path, char *path)
 {
 	int		i;
 	char	*tmp;
-	char	*tmp2;
-
 
 	i = 0;
 	while (all_path[i])
 	{
-		tmp = ft_strjoin(all_path[i], path);
-		if (!access(tmp, F_OK))
-			return (tmp2 = ft_strdup(tmp),free(tmp), tmp2);
-		free(tmp);
+		if ((tmp = access_check(all_path[i], path)) != NULL)
+			return (tmp);
 		i++;
 	}
+	return (NULL);
+}
+
+char	*access_check(char *all_path, char *path)
+{
+	char	*tmp;
+	char	*tmp2;
+
+	tmp = ft_strjoin(all_path, path);
+	if (!access(tmp, F_OK | X_OK))
+		return (tmp2 = ft_strdup(tmp),free(tmp), tmp2);
+	free(tmp);
 	return (NULL);
 }

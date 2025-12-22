@@ -49,6 +49,7 @@ int		set_fd(t_pipex *pipex, char **av);
 char	*path_check(t_pipex *pipex, char **envp, char *path);
 int		path_find(char **envp);
 char	*path_exist(char **all_path, char *path);
+char	*access_check(char *all_path, char *path);
 
 int		new_child(t_pipex *pipex, char **envp);
 int		child_do(t_pipex *pipex, char **envp);

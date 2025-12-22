@@ -26,8 +26,6 @@ void	clean_exit(t_pipex *pipex)
 		free(pipex->true_path1);
 	if (pipex->true_path2)
 		free(pipex->true_path2);
-	// if (pipex->all_path)
-	// 	free_tab(pipex->all_path);
 	return ;
 }
 
