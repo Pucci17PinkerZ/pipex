@@ -82,13 +82,15 @@ char	*path_exist(char **all_path, char *path)
 {
 	int		i;
 	char	*tmp;
+	char	*tmp2;
+
 
 	i = 0;
 	while (all_path[i])
 	{
 		tmp = ft_strjoin(all_path[i], path);
 		if (!access(tmp, F_OK))
-			return (strdup(tmp));
+			return (tmp2 = ft_strdup(tmp),free(tmp), tmp2);
 		free(tmp);
 		i++;
 	}

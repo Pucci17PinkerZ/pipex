@@ -16,12 +16,18 @@ void	clean_exit(t_pipex *pipex)
 {
 	if (pipex->cmd_args)
 		free_tab(pipex->cmd_args);
+	if (pipex->cmd2_args)
+		free_tab(pipex->cmd2_args);
 	if (pipex->path1)
 		free(pipex->path1);
 	if (pipex->path2)
 		free(pipex->path2);
 	if (pipex->true_path1)
 		free(pipex->true_path1);
+	if (pipex->true_path2)
+		free(pipex->true_path2);
+	// if (pipex->all_path)
+	// 	free_tab(pipex->all_path);
 	return ;
 }
 

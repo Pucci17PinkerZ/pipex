@@ -53,7 +53,6 @@ int	parent_do(t_pipex *pipex, char **envp)
 		return (perror("fork"), 1);
 	else if (pipex->child2 == 0)
 	{
-		printf("child2 existe\n");
 		if ((dup2(pipex->pipedes[0], 0)) == -1)
 			return (perror("dup2.1"), 1);
 		if ((dup2(pipex->oldfd2, 1)) == -1)
