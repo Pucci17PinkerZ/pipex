@@ -35,7 +35,7 @@ int	new_child(t_pipex *pipex, char **av, char **envp)
 int	child_do(t_pipex *pipex, char **av, char **envp)
 {
 	if (setup1(pipex, av, envp))
-		return (1);
+		return (perror("setup1"), 1);
 	if(pipex->oldfd1 == -1)
 		return (1);
 	if ((dup2(pipex->oldfd1, 0)) == -1)
@@ -58,7 +58,7 @@ int	parent_do(t_pipex *pipex, char **av, char **envp)
 	else if (pipex->child2 == 0)
 	{
 		if (setup2(pipex, av, envp))
-			return (1);
+			return (perror("setup2"), 1);
 		if ((dup2(pipex->pipedes[0], 0)) == -1)
 			return (perror("dup2.1"), 1);
 		if ((dup2(pipex->oldfd2, 1)) == -1)

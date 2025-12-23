@@ -32,6 +32,6 @@ fclean: clean
 	@make fclean -C $(LIBFTDIR) --no-print-directory
 	@make fclean -C $(FTPRINTFDIR) --no-print-directory
 re: fclean all
-
+	
 
 .PHONY: all clean fclean re

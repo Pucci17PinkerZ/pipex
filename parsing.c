@@ -20,10 +20,7 @@ int	setup2(t_pipex *pipex, char **av, char **envp)
 	if (tmp)
 	{
 		if (ft_strlen(tmp) == 0)
-		{
-			ft_printf("full whitespaces cmd");
 			return(free(tmp), 1);
-		}
 	}
 	pipex->cmd2_args = ft_split(av[3], ' ');
 	if (!pipex->cmd2_args)
@@ -31,8 +28,6 @@ int	setup2(t_pipex *pipex, char **av, char **envp)
 	pipex->true_path2 = before_path_check(pipex, envp, pipex->cmd2_args[0]);
 	if (!pipex->true_path2)
 		return (perror("path_check"), 1);
-	if (set_fd(pipex, av))
-		return (perror("set_fd"), 1);
 	return (0);
 }
 
@@ -44,10 +39,7 @@ int	setup1(t_pipex *pipex, char **av, char **envp)
 	if (tmp)
 	{
 		if (ft_strlen(tmp) == 0)
-		{
-			ft_printf("full whitespaces cmd");
 			return(free(tmp), 1);
-		}
 	}
 	pipex->cmd_args = ft_split(av[2], ' ');
 	if (!pipex->cmd_args)
