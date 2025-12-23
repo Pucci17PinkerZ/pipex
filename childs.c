@@ -12,7 +12,7 @@
 
 #include "pipex.h"
 
-int	new_child(t_pipex *pipex, char **envp)
+int	new_child(t_pipex *pipex, char **av, char **envp)
 {
 	if (pipe(pipex->pipedes))
 		return (perror("pipe"), 1);
@@ -21,23 +21,27 @@ int	new_child(t_pipex *pipex, char **envp)
 		return (perror("fork"), 1);
 	else if (pipex->child1 == 0)
 	{
-		if (child_do(pipex, envp))
+		if (child_do(pipex, av, envp))
 			return (perror("child_do"), 1);
 	}
 	else
 	{
-		if (parent_do(pipex, envp))
+		if (parent_do(pipex, av, envp))
 			return (perror("parent _do"), 1);
 	}
 	return (0);
 }
 
-int	child_do(t_pipex *pipex, char **envp)
+int	child_do(t_pipex *pipex, char **av, char **envp)
 {
+	if (setup1(pipex, av, envp))
+		return (1);
+	if(pipex->oldfd1 == -1)
+		return (1);
 	if ((dup2(pipex->oldfd1, 0)) == -1)
-		return (perror("dup2.1"), 1);
+		return (perror("dup2"), 1);
 	if ((dup2(pipex->pipedes[1], 1)) == -1)
-		return (perror("dup2.2"), 1);
+		return (perror("dup2"), 1);
 	close(pipex->pipedes[0]);
 	close(pipex->pipedes[1]);
 	close(pipex->oldfd1);
@@ -46,13 +50,15 @@ int	child_do(t_pipex *pipex, char **envp)
 	return (0);
 }
 
-int	parent_do(t_pipex *pipex, char **envp)
+int	parent_do(t_pipex *pipex, char **av, char **envp)
 {
 	pipex->child2 = fork();
 	if (pipex->child2 == -1)
 		return (perror("fork"), 1);
 	else if (pipex->child2 == 0)
 	{
+		if (setup2(pipex, av, envp))
+			return (1);
 		if ((dup2(pipex->pipedes[0], 0)) == -1)
 			return (perror("dup2.1"), 1);
 		if ((dup2(pipex->oldfd2, 1)) == -1)
@@ -70,7 +76,8 @@ int	parent_do(t_pipex *pipex, char **envp)
 
 int	fd_close(t_pipex *pipex)
 {
-	close(pipex->oldfd1);
+	if (pipex->oldfd1 != -1)
+		close(pipex->oldfd1);
 	close(pipex->oldfd2);
 	close(pipex->newfd1);
 	close(pipex->newfd2);

@@ -50,24 +50,12 @@ int	set_fd(t_pipex *pipex, char **av)
 	pipex->file1 = av[1];
 	pipex->oldfd1 = open(pipex->file1, O_RDONLY, 0644);
 	if (pipex->oldfd1 == -1)
-		return (perror("open"), 1);
+		perror("open");
 	pipex->file2 = av[4];
 	pipex->oldfd2 = open(pipex->file2, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (pipex->oldfd2 == -1)
 		return (perror("open"), 1);
 	return (0);
-}
-
-char	*access_check(char *all_path, char *path)
-{
-	char	*tmp;
-	char	*tmp2;
-
-	tmp = ft_strjoin(all_path, path);
-	if (!access(tmp, F_OK | X_OK))
-		return (tmp2 = ft_strdup(tmp), free(tmp), tmp2);
-	free(tmp);
-	return (NULL);
 }
 
 int	test_input(char **av)

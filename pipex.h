@@ -22,6 +22,7 @@
 # include <errno.h>
 # include <string.h>
 # include "libft/libft.h"
+# include "ft_printf/ft_printf.h"
 
 typedef struct s_pipex
 {
@@ -44,16 +45,18 @@ typedef struct s_pipex
 	pid_t	child2;
 }	t_pipex;
 
-int		setup(t_pipex *pipex, char **av, char **envp);
+int		setup1(t_pipex *pipex, char **av, char **envp);
+int		setup2(t_pipex *pipex, char **av, char **envp);
 int		set_fd(t_pipex *pipex, char **av);
+char	*before_path_check(t_pipex *pipex, char **envp, char *path);
 char	*path_check(t_pipex *pipex, char **envp, char *path);
 int		path_find(char **envp);
 char	*path_exist(char **all_path, char *path);
 char	*access_check(char *all_path, char *path);
 
-int		new_child(t_pipex *pipex, char **envp);
-int		child_do(t_pipex *pipex, char **envp);
-int		parent_do(t_pipex *pipex, char **envp);
+int		new_child(t_pipex *pipex, char **av, char **envp);
+int		child_do(t_pipex *pipex, char **av, char **envp);
+int		parent_do(t_pipex *pipex, char **av, char **envp);
 
 void	free_tab(char **tab);
 int		tab_element(char *tab);
