@@ -27,9 +27,8 @@ int	main(int ac, char **av, char **envp)
 	if (set_fd(&pipex, av))
 		return (perror("set_fd"), 1);
 	if (new_child(&pipex, av, envp))
-		return (clean_exit(&pipex), 1);
+		return (clean_exit(&pipex), fd_close(&pipex), 1);
 	waitpid(pipex.child1, NULL, 0);
 	waitpid(pipex.child2, NULL, 0);
 	return (clean_exit(&pipex), 0);
 }
-

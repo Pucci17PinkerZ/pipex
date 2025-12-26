@@ -70,3 +70,15 @@ int	test_input(char **av)
 		return (1);
 	return (0);
 }
+
+int	fd_close(t_pipex *pipex)
+{
+	if (pipex->oldfd1 != -1)
+		close(pipex->oldfd1);
+	close(pipex->oldfd2);
+	close(pipex->newfd1);
+	close(pipex->newfd2);
+	close(pipex->pipedes[0]);
+	close(pipex->pipedes[1]);
+	return (0);
+}

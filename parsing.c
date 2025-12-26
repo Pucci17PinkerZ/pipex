@@ -12,46 +12,6 @@
 
 #include "pipex.h"
 
-int	setup2(t_pipex *pipex, char **av, char **envp)
-{
-	char *tmp;
-
-	tmp = ft_strtrim(av[3], " ");
-	if (tmp)
-	{
-		if (ft_strlen(tmp) == 0)
-			return(free(tmp), 1);
-	}
-	pipex->cmd2_args = ft_split(av[3], ' ');
-	if (!pipex->cmd2_args)
-		return (perror("ft_split"), 1);
-	pipex->true_path2 = before_path_check(pipex, envp, pipex->cmd2_args[0]);
-	if (!pipex->true_path2)
-		return (perror("path_check"), 1);
-	return (0);
-}
-
-int	setup1(t_pipex *pipex, char **av, char **envp)
-{
-	char *tmp;
-
-	tmp = ft_strtrim(av[2], " ");
-	if (tmp)
-	{
-		if (ft_strlen(tmp) == 0)
-			return(free(tmp), 1);
-	}
-	pipex->cmd_args = ft_split(av[2], ' ');
-	if (!pipex->cmd_args)
-		return (perror("ft_split"), 1);
-	pipex->true_path1 = before_path_check(pipex, envp, pipex->cmd_args[0]);
-	if (!pipex->true_path1)
-		return (perror("path_check"), 1);
-	if (set_fd(pipex, av))
-		return (perror("set_fd"), 1);
-	return (0);
-}
-
 char	*before_path_check(t_pipex *pipex, char **envp, char *path)
 {
 	char	*path_checker;
@@ -59,7 +19,8 @@ char	*before_path_check(t_pipex *pipex, char **envp, char *path)
 
 	if (strchr(path, '/'))
 	{
-		if ((path_checker = access_check("", path)) != NULL)
+		path_checker = access_check("", path);
+		if (path_checker != NULL)
 			return (path_checker);
 		return (NULL);
 	}
@@ -67,7 +28,7 @@ char	*before_path_check(t_pipex *pipex, char **envp, char *path)
 	path_checker = path_check(pipex, envp, tmp_path);
 	if (path_checker)
 		return (free(tmp_path), path_checker);
-	return (perror("path_check"), free(tmp_path),  NULL);
+	return (free(tmp_path), NULL);
 }
 
 char	*path_check(t_pipex *pipex, char **envp, char *path)
@@ -78,7 +39,8 @@ char	*path_check(t_pipex *pipex, char **envp, char *path)
 	i = path_find(envp);
 	if (i == -1)
 	{
-		if ((path_checker = access_check("", path)) != NULL)
+		path_checker = access_check("", path);
+		if (path_checker != NULL)
 			return (path_checker);
 		return (perror("access_check"), NULL);
 	}
@@ -87,7 +49,7 @@ char	*path_check(t_pipex *pipex, char **envp, char *path)
 		return (free_tab(pipex->all_path), perror("ft_split"), NULL);
 	path_checker = path_exist(pipex->all_path, path);
 	if (!path_checker)
-		return (free_tab(pipex->all_path), perror("path_exist"), NULL);
+		return (free_tab(pipex->all_path), NULL);
 	return (free_tab(pipex->all_path), path_checker);
 }
 
@@ -115,7 +77,8 @@ char	*path_exist(char **all_path, char *path)
 	i = 0;
 	while (all_path[i])
 	{
-		if ((tmp = access_check(all_path[i], path)) != NULL)
+		tmp = access_check(all_path[i], path);
+		if (tmp != NULL)
 			return (tmp);
 		i++;
 	}

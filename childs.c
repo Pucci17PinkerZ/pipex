@@ -22,7 +22,7 @@ int	new_child(t_pipex *pipex, char **av, char **envp)
 	else if (pipex->child1 == 0)
 	{
 		if (child_do(pipex, av, envp))
-			return (perror("child_do"), 1);
+			return (1);
 	}
 	else
 	{
@@ -35,8 +35,8 @@ int	new_child(t_pipex *pipex, char **av, char **envp)
 int	child_do(t_pipex *pipex, char **av, char **envp)
 {
 	if (setup1(pipex, av, envp))
-		return (perror("setup1"), 1);
-	if(pipex->oldfd1 == -1)
+		return (1);
+	if (pipex->oldfd1 == -1)
 		return (1);
 	if ((dup2(pipex->oldfd1, 0)) == -1)
 		return (perror("dup2"), 1);
@@ -58,7 +58,7 @@ int	parent_do(t_pipex *pipex, char **av, char **envp)
 	else if (pipex->child2 == 0)
 	{
 		if (setup2(pipex, av, envp))
-			return (perror("setup2"), 1);
+			return (1);
 		if ((dup2(pipex->pipedes[0], 0)) == -1)
 			return (perror("dup2.1"), 1);
 		if ((dup2(pipex->oldfd2, 1)) == -1)
@@ -74,14 +74,42 @@ int	parent_do(t_pipex *pipex, char **av, char **envp)
 	return (0);
 }
 
-int	fd_close(t_pipex *pipex)
+int	setup1(t_pipex *pipex, char **av, char **envp)
 {
-	if (pipex->oldfd1 != -1)
-		close(pipex->oldfd1);
-	close(pipex->oldfd2);
-	close(pipex->newfd1);
-	close(pipex->newfd2);
-	close(pipex->pipedes[0]);
-	close(pipex->pipedes[1]);
+	char	*tmp;
+
+	tmp = ft_strtrim(av[2], " ");
+	if (tmp)
+	{
+		if (ft_strlen(tmp) == 0)
+			return (free(tmp), 1);
+	}
+	free(tmp);
+	pipex->cmd_args = ft_split(av[2], ' ');
+	if (!pipex->cmd_args)
+		return (perror("ft_split"), 1);
+	pipex->true_path1 = before_path_check(pipex, envp, pipex->cmd_args[0]);
+	if (!pipex->true_path1)
+		return (perror("path_check, path does not exist"), 1);
+	return (0);
+}
+
+int	setup2(t_pipex *pipex, char **av, char **envp)
+{
+	char	*tmp;
+
+	tmp = ft_strtrim(av[3], " ");
+	if (tmp)
+	{
+		if (ft_strlen(tmp) == 0)
+			return (free(tmp), 1);
+	}
+	free(tmp);
+	pipex->cmd2_args = ft_split(av[3], ' ');
+	if (!pipex->cmd2_args)
+		return (perror("ft_split"), 1);
+	pipex->true_path2 = before_path_check(pipex, envp, pipex->cmd2_args[0]);
+	if (!pipex->true_path2)
+		return (perror("path_check, path does not exist"), 1);
 	return (0);
 }
